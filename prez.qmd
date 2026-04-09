@@ -1,0 +1,51 @@
+---
+title: "Solving Sharp-Interface Phase-Change Problems:<br> Newton Is All You Need!"
+subtitle: "TCM Team Meeting, April 2026"
+date: today
+author: Louis Libat*, Can Selçuk, Eric Chénier, Vincent Le Chenadec
+institute: "Multiscale Modeling and Simulation Laboratory (MSME), CNRS UMR 8208, Gustave Eiffel University, France"
+date-format: 'YYYY-MM-DD'
+format: 
+  revealjs:
+    theme: [default, theme.scss]
+    css: theme.css
+    html-math-method: mathml
+    margin-left: '3rem'
+history: false
+navigation-mode: linear
+controls: false
+slide-number: true
+progress: false
+menu: false
+smaller: true
+scrollable: false
+margin: 0.1
+revealOptions:
+  width: 1280
+  height: 720
+disable-layout: false
+transition: none
+transition-speed: default
+fig-format: svg
+embed-resources: true
+bibliography: references.bib
+csl: chicago-fullnote-bibliography.csl
+---
+
+# Motivation
+
+
+## Thank you {.center}
+
+::: center
+**Questions?**
+:::
+
+# References {.appendix visibility="uncounted"}
+
+::: {#refs}
+:::
+
+# Appendix {.appendix visibility="uncounted"}
+
+## Appendix — 
