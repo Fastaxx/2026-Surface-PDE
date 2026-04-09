@@ -1,8 +1,8 @@
 ---
-title: "Solving Sharp-Interface Phase-Change Problems:<br> Newton Is All You Need!"
+title: "When Physics lives on the Interface:<br> Surface Manifolds PDEs "
 subtitle: "TCM Team Meeting, April 2026"
 date: today
-author: Louis Libat*, Can Selçuk, Eric Chénier, Vincent Le Chenadec
+author: Thomas Sobre, Louis Libat, Can Selçuk, Eric Chénier, Vincent Le Chenadec
 institute: "Multiscale Modeling and Simulation Laboratory (MSME), CNRS UMR 8208, Gustave Eiffel University, France"
 date-format: 'YYYY-MM-DD'
 format: 
@@ -34,6 +34,37 @@ csl: chicago-fullnote-bibliography.csl
 
 # Motivation
 
+## When physics lives on the interface
+
+:::{.columns}
+::: {.column width="55%"}
+- Some physics does **not** live in the volume
+- It lives on an **interface**: membranes, films, droplets, bubbles
+- A surface PDE is the natural model when the layer is **thin** and **active**
+- Geometry matters: **tangency, curvature, transport on the interface**
+:::
+
+::: {.column width="45%"}
+![](figures/Ggb_in_soap_bubble_1.jpg){width=100%}
+:::
+:::
+
+## Why solve on the surface?
+
+:::{.columns}
+::: {.column width="52%"}
+- The unknown is **confined to the interface itself**
+- We avoid resolving an artificial **thin bulk layer**
+- Surface diffusion, advection, and reaction follow the **geometry of the manifold**
+- This is the right language for **surfactants, membranes, and interfacial chemistry**
+:::
+
+::: {.column width="48%"}
+![](images/plasma_membrane.jpg){width=100%}
+
+![](images/blue_marble.jpg){width=78% fig-align="center"}
+:::
+:::
 
 ## Thank you {.center}
 
