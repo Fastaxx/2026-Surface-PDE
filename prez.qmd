@@ -1,9 +1,9 @@
 ---
-title: "When Physics Lives on the Interface"
-subtitle: "Solving Surface PDEs via Discrete Exterior Calculus · TCM Team Meeting, April 2026"
+title: "When Physics Lives on the Interface : Solving Surface PDEs via Discrete Exterior Calculus"
+subtitle: "TCM Team Meeting, June 2026"
 date: today
-author: Thomas Sobre, Louis Libat, Can Selçuk, Eric Chénier, Vincent Le Chenadec
-institute: "MSME, CNRS UMR 8208 — Gustave Eiffel University"
+author: Louis Libat, Thomas Sobre, Can Selçuk, Eric Chénier, Vincent Le Chenadec
+institute: "MSME, CNRS UMR 8208 - Gustave Eiffel University"
 date-format: 'YYYY-MM-DD'
 format:
   revealjs:
@@ -15,7 +15,7 @@ format:
     controls: false
     slide-number: true
     progress: false
-    menu: false
+    menu: true
     smaller: true
     scrollable: false
     margin: 0.1
@@ -33,91 +33,73 @@ csl: chicago-fullnote-bibliography.csl
 ## Physics confined to the interface
 
 :::{.columns}
-::: {.column width="33%"}
-![Soap film: a 2D active layer](figures/Ggb_in_soap_bubble_1.jpg){width=100%}
-:::
-::: {.column width="34%"}
-![Surfactants self-assemble at the air–water interface](figures/surfactant_interface.svg){width=100%}
+::: {.column width="58%"}
+![Soap Bubble](figures/GettyImages-639545023.jpg){width=100%}
 
-*Source: Wikimedia Commons*
 :::
-::: {.column width="33%"}
-![Phospholipid bilayer: membrane physics](figures/phospholipids.svg){width=100%}
 
-*Source: Wikimedia Commons*
+::: {.column width="42%"}
+::: {.r-fit-text}
+Membranes, droplets, bubbles, thin films:
+:::
+
+::: {.r-fit-text}
+the physics lives on $\Gamma$.
+:::
+
+The interface is a **computational domain**, not only a boundary condition.
+:::
+:::
+
+
+## Why a surface field changes the physics
+
+:::{.columns}
+::: {.column width="45%"}
+
+![Surfactant concentration and surface tension gradients act on the interface](figures/surfactant_schema_1.jpg){width=92%}
+
+:::
+::: {.column width="55%"}
+
+**A small surface concentration can change the bulk motion.**
+
+Let $c_\Gamma(\mathbf{x},t)$ be the **surface concentration** - molecules adsorbed per unit interfacial area, $[c_\Gamma] = \mathrm{mol\,m^{-2}}$ - living **on** the interface $\Gamma(t)$.
+
+- $c_\Gamma$ is advected and diffuses **along** the interface.
+- $c_\Gamma$ changes $\sigma(c_\Gamma)$ (the surface tension).
+- $\nabla_\Gamma\sigma$ creates Marangoni stress.
+- The interface can immobilise, deform, or stop coalescence.
+
 :::
 :::
 
 ::: {.callout-important}
-Membranes · Droplets · Bubbles · Thin films — the **interface itself** carries the physics.
-If the layer is thin and active, the interface must be a **computational domain**, not just a boundary.
+The unknown lives **on** $\Gamma$ and obeys its own transport law:
+$\Gamma$ must be discretized as a surface domain.
 :::
 
-## What surface PDEs can do
+## A sharp Two-phase interface model [@Bothe_2022]
 
-:::{.columns}
-::: {.column width="52%"}
+Couples bulk Navier–Stokes + species, an interface stress jump (Young–Laplace + Marangoni), and - the focus of this talk - a **surface PDE** for $c_\Gamma$ on $\Gamma(t)$:
 
-Solve a PDE **directly on the triangulated interface**:
+$$\boxed{\;\partial_t^\bullet c_\Gamma \;+\; c_\Gamma\,\nabla_\Gamma\!\cdot\!\mathbf{u}_\Gamma \;-\; \nabla_\Gamma\!\cdot\!\bigl(D_s\nabla_\Gamma c_\Gamma\bigr) \;=\; \bigl[\!\bigl[D\nabla c\cdot\mathbf{n}\bigr]\!\bigr]\;}$$
 
-* **Surface diffusion** — heat, concentration, temperature
-* **Surface advection** — tangential transport on moving drops
-* **Reaction–diffusion** — interfacial chemistry, Turing patterns
-* **Hodge decomposition** — tangent vector fields on surfaces
-
-All from a single discrete operator framework: **DEC**.
-
-:::
-::: {.column width="48%"}
-
-![Heat diffusing from a source along a complex surface — a surface PDE in action](figures/crane_heat_teaser.png){width=100%}
-
-*Figure: Crane, Weischedel, Wardetzky — The Heat Method, ACM TOG (CMU)*
-
-:::
-:::
-
-## The Bothe sharp interface model
-
-For a two-phase flow with a **soluble surfactant** (Bothe, Köhne, Prüss 2012):
-
-:::{.columns}
-::: {.column width="50%"}
-
-**Bulk phases** $\Omega^\pm(t)$:
-
-$$\rho^\pm\bigl(\partial_t\mathbf{u} + \mathbf{u}\cdot\nabla\mathbf{u}\bigr) = -\nabla p + \nabla\cdot(2\mu^\pm\mathbf{D}) + \rho^\pm\mathbf{g}$$
-
-$$\nabla\cdot\mathbf{u} = 0, \qquad \partial_t c^\pm + \mathbf{u}\cdot\nabla c^\pm = \nabla\cdot(D^\pm\nabla c^\pm)$$
-
-**Kinematic condition** at $\Gamma(t)$:
-
-$$V_n = \mathbf{u}_\Gamma\cdot\mathbf{n}$$
-
-:::
-::: {.column width="50%"}
-
-**Stress jump** (Young–Laplace + Marangoni):
-
-$$\bigl[\![-p\mathbf{I} + 2\mu\mathbf{D}\bigr]\!]\cdot\mathbf{n} = \sigma(\Gamma_s)\,\kappa\,\mathbf{n} - \nabla_\Gamma\sigma$$
-
-**Surfactant transport on $\Gamma(t)$** — a surface PDE:
-
-$$\boxed{\partial_t^\bullet\Gamma_s + \Gamma_s\,\nabla_\Gamma\cdot\mathbf{u}_\Gamma - \nabla_\Gamma\cdot(D_s\nabla_\Gamma\Gamma_s) = \bigl[\!\bigl[D\nabla c\cdot\mathbf{n}\bigr]\!\bigr]}$$
-
-:::
-:::
+* $\partial_t^\bullet c_\Gamma = \frac{\partial c_\Gamma}{\partial t} + c_\Gamma\,\mathbf{u}_\Gamma \cdot \nabla_\Gamma$ - Thomas derivative following the motion of $\Gamma(t)$.
+* $c_\Gamma\,\nabla_\Gamma\!\cdot\!\mathbf{u}_\Gamma$ - **area-change** source from stretching of the moving surface.
+* $-\nabla_\Gamma\!\cdot\!(D_s\nabla_\Gamma c_\Gamma)$ - surface diffusion.
+* $[\![D\nabla c\cdot\mathbf{n}]\!]$ - adsorption/desorption flux from the bulk phases.
 
 ::: {.callout-note}
-The boxed equation is a **surface PDE** — the interface $\Gamma(t)$ is the computational domain. The right-hand side $[[D\nabla c\cdot\mathbf{n}]]$ couples bulk adsorption to the surface field.
+The boxed equation is the **surface PDE** - $\Gamma(t)$ is the computational domain. The bulk only enters through the right-hand side $[\![D\nabla c\cdot\mathbf{n}]\!]$.
 :::
 
-# Surface PDEs — the continuous picture {background-color="#1a1a2e"}
+# Surface PDEs - the continuous picture {background-color="#1a1a2e"}
 
 ## The surface as computational domain
 
 :::{.columns}
-::: {.column width="55%"}
+::: {.column width="56%"}
 
 Let $\Gamma \subset \mathbb{R}^3$ be a smooth surface. A scalar field lives **on** $\Gamma$:
 
@@ -127,46 +109,43 @@ $$u : \Gamma \to \mathbb{R}$$
 
 $$\nabla_\Gamma u = \underbrace{(\mathbf{I} - \mathbf{n}\otimes\mathbf{n})}_{\mathbf{P}}\,\nabla u, \qquad \Delta_\Gamma u = \nabla_\Gamma \cdot \nabla_\Gamma u$$
 
-The normal direction is **projected out** — everything lives in the tangent plane.
+The normal direction is **projected out** - everything lives in the tangent plane.
 
 :::
-::: {.column width="45%"}
+::: {.column width="44%"}
 
-![Shortest geodesic distance on a surface — solved by a surface PDE](figures/crane_ddg_fig3.svg){width=100%}
+![Shortest geodesic distance on a surface - solved by a surface PDE](figures/crane_ddg_fig3.svg){width=100%}
 
-*Figure: Crane — DDG: An Applied Introduction (CMU)*
+*Figure: Crane - DDG: An Applied Introduction (CMU)*
 
 :::
 :::
 
 ## Model problems
 
-**Three canonical surface PDEs:**
+**On a moving interface** $\Gamma(t)$, the surface transport equation :
 
-| Equation | |
-|---|---|
-| Surface diffusion | $\partial_t u - D\,\Delta_\Gamma u = f$ |
-| Advection–diffusion | $\partial_t u + \nabla_\Gamma \cdot (u\,\mathbf{w}_\tau) - D\,\Delta_\Gamma u = f$ |
-| Reaction–diffusion | $\partial_t u - D\,\Delta_\Gamma u = R(u)$ |
+$$\underbrace{\partial_t^\bullet c_\Gamma}_{\substack{\text{rate following}\\ \text{normal motion}}} + \underbrace{c_\Gamma\,\nabla_\Gamma\!\cdot\!\mathbf{u}_\Gamma}_{\substack{\text{surface dilatation}\\ \text{(area stretches)}}} - \underbrace{\nabla_\Gamma\!\cdot\!(D_s\nabla_\Gamma c_\Gamma)}_{\text{surface diffusion}} = \underbrace{\bigl[\!\bigl[D\nabla c\cdot\mathbf{n}\bigr]\!\bigr]}_{\substack{\text{bulk}\\ \text{adsorption}}}$$
 
-**The Bothe surfactant equation on a moving interface $\Gamma(t)$:**
+Here $\nabla_\Gamma\!\cdot\!\mathbf{u}_\Gamma$ is the **surface divergence of the full interface velocity** - it measures the local rate at which the moving surface stretches; on a sphere growing outward, $\nabla_\Gamma\!\cdot\!\mathbf{u}_\Gamma = 2 V_n / R$. That stretching dilutes $c_\Gamma$.
 
-$$\partial_t^\bullet\Gamma_s + \Gamma_s\,\nabla_\Gamma\cdot\mathbf{u}_\Gamma - \nabla_\Gamma\cdot(D_s\nabla_\Gamma\Gamma_s) = \bigl[\!\bigl[D\nabla c\cdot\mathbf{n}\bigr]\!\bigr]$$
+Getting the geometry right is not optional.
 
-Every term has a geometric meaning: **material transport** · **area change** · **surface diffusion** · **bulk exchange**. Getting the geometry right is not optional.
+::: {.r-fit-text}
+How do we discretize $\nabla_\Gamma$, $\nabla_\Gamma \cdot$, $\Delta_\Gamma$
+without embedding coordinates everywhere?
+:::
 
 # Discrete Differential Geometry and DEC {background-color="#1a1a2e"}
 
 ## The central question
 
-If the surface is a triangulated mesh:
-
 ::: {.r-fit-text}
-How do we discretize $\nabla_\Gamma$, $\nabla_\Gamma\!\cdot$, $\Delta_\Gamma$
+How do we discretize $\nabla_\Gamma$, $\nabla_\Gamma \cdot$, $\Delta_\Gamma$
 without embedding coordinates everywhere?
 :::
 
-DEC separates two ingredients cleanly:
+DEC [@Crane:2013:DGP] separates two ingredients cleanly:
 
 :::{.columns}
 ::: {.column width="50%"}
@@ -174,7 +153,7 @@ DEC separates two ingredients cleanly:
 ### Topology
 Encoded by **incidence matrices** $d_0, d_1$.
 
-Exact by construction — no quadrature.
+Exact by construction - no quadrature.
 
 Independent of the metric.
 
@@ -193,246 +172,181 @@ Separate from the combinatorial structure.
 
 ## The simplicial complex
 
-:::{.columns}
-::: {.column width="45%"}
+![](figures/schem_simplices.svg){fig-align="center" width=78%}
 
-![Vertices (0-simplices), edges (1-simplices), faces (2-simplices)](figures/simplicial_complex.png){width=85%}
+A triangulated surface is a **simplicial 2-complex** - three kinds of cells:
 
-*Source: Wikimedia Commons*
+| Cell | What it carries |
+|------|-----------------|
+| Vertex $v_i$ (0-simplex) | a scalar value $u_i$ |
+| Edge $e_{ij}$ (1-simplex) | a flux $\omega_{ij}$ integrated along the edge |
+| Triangle $f_{ijk}$ (2-simplex) | a density integrated over the triangle |
 
-:::
-::: {.column width="55%"}
-
-A triangulated surface is a **simplicial 2-complex**.
-
-**DEC lives on mesh cells:**
-
-| Cell | Dim | Carries |
-|------|-----|---------|
-| Vertex $v_i$ | 0 | scalar values (0-form) |
-| Edge $e_{ij}$ | 1 | tangential fluxes (1-form) |
-| Face $f_{ijk}$ | 2 | area densities (2-form) |
-
-Not nodal interpolation — **integrated quantities** on geometric cells.
-
-Conservation and exact sequence properties follow naturally.
-
-:::
-:::
+These are **integrated** quantities on geometric cells - not nodal samples. That is what makes the discrete operators conservative by construction.
 
 ## Primal mesh and dual mesh
 
 :::{.columns}
 ::: {.column width="50%"}
 
-**Two complementary meshes:**
-
-* **Primal** — triangles, edges, vertices
-* **Dual** — Voronoi cells, dual edges, barycenters
-
-The **Hodge star** bridges them through local metric ratios:
-
-$$(\star_0)_{ii} = A_i^{\mathrm{dual}}, \qquad (\star_1)_{ee} = \frac{\ell_e^{*}}{\ell_e}$$
-
-$A_i^{\mathrm{dual}}$: Voronoi area around vertex $i$
-
-$\ell_e^{*} / \ell_e$: dual-to-primal edge ratio
+![](figures/schem_dual_area.svg){fig-align="center" width=92%}
 
 :::
 ::: {.column width="50%"}
 
-::: {.callout-important title="Topology vs geometry — separated"}
+**Two complementary meshes:**
 
-$$\underbrace{d_0,\; d_1}_{\text{incidence (topology)}} \qquad \underbrace{\star_0,\; \star_1,\; \star_2}_{\text{metric ratios (geometry)}}$$
+* **Primal** - triangles, edges, vertices.
+* **Dual** - Voronoi cells around each vertex, dual edges across primal edges.
 
-Connectivity never mixes with metric.
-This is the key structural property of DEC.
+Every primal cell pairs with one dual cell of complementary dimension:
+
+| Primal | Dual |
+|:--|:--|
+| vertex $v_i$ | Voronoi area $A_i^{\mathrm{dual}}$ |
+| edge $e_{ij}$ | perpendicular dual edge $e^*$ |
+| triangle $f_{ijk}$ | its circumcenter |
+
+The Voronoi area $A_i^{\mathrm{dual}}$ around vertex $i$ is the **integration weight** carried by a scalar value $u_i$.
 
 :::
-
-::: {.callout-tip}
-Both DEC and cotangent FEM lead to the same Laplace–Beltrami — two derivations, one operator.
 :::
 
-:::
-:::
+## Discrete gradient and curl - $d_0$, $d_1$
 
-## The exterior derivative
+**$d_0$ - difference along edges** (discrete gradient):
 
-The discrete exterior derivative is **pure incidence** — no metric needed:
+$$(d_0\, u)_{ij} = u_j - u_i.$$
 
-$$
-(d_0\, u)_{ij} = u_j - u_i, \qquad (d_1\,\omega)_{ijk} = \omega_{ij} + \omega_{jk} - \omega_{ik}
-$$
+A scalar value on vertices $(u_i)$ becomes an edge quantity $(d_0 u)_{ij}$: the **change in $u$** along edge $e_{ij}$.
 
-**The discrete de Rham complex:**
+**$d_1$ - circulation around triangles** (discrete curl):
 
-$$
-0 \longrightarrow
-\underbrace{\Lambda^0}_{\text{vertices}}
-\xrightarrow{\;d_0\;}
-\underbrace{\Lambda^1}_{\text{edges}}
-\xrightarrow{\;d_1\;}
-\underbrace{\Lambda^2}_{\text{faces}}
-\longrightarrow 0
-$$
+$$(d_1\,\omega)_{ijk} = \omega_{ij} + \omega_{jk} - \omega_{ki}.$$
+
+An edge quantity $(\omega_{ij})$ becomes a triangle quantity: the **signed sum around the boundary** of the triangle (Stokes' theorem, discretely).
 
 :::{.columns}
 ::: {.column width="55%"}
 
-**Fundamental identity — exact by construction:**
+::: {.callout-important title="Conservation, not interpolation"}
+$d_0$ and $d_1$ are **incidence matrices** built from the mesh connectivity alone - no metric, no quadrature, no choice of basis.
 
-$$d_1\, d_0 = 0 \quad \Longleftrightarrow \quad \nabla\!\times\!\nabla = 0, \quad \nabla\!\cdot\!\nabla\!\times = 0$$
+They are exact by construction:
 
-No quadrature error — follows from the mesh topology alone.
+$$d_1\, d_0 = 0 \quad \Longleftrightarrow \quad \nabla\!\times\!\nabla u \equiv 0.$$
+:::
 
 :::
 ::: {.column width="45%"}
 
-![1-forms on a surface: designing smooth vector fields by specifying singularities](figures/crane_ddg_fig4.svg){width=100%}
+Reading $d_0$ on the edge $e_{ij}=[v_i,v_j]$:
 
-*Figure: Crane — DDG (CMU)*
+* $u_i, u_j$ live on vertices.
+* $(d_0 u)_{ij} = u_j - u_i$ integrates $\nabla u$ along the edge - by the fundamental theorem of calculus, **exactly**.
+* No piecewise-linear interpolation is needed for the discrete law to hold.
 
 :::
 :::
 
-## The Hodge star and Hodge decomposition
+## The Hodge star - where the geometry enters
 
 :::{.columns}
 ::: {.column width="50%"}
 
-$\star_k$ maps primal $k$-forms to dual $(2-k)$-forms:
-
-$$\star_0 = \mathrm{diag}(A_i^{\mathrm{dual}}), \quad \star_2 = \mathrm{diag}(1/A_f)$$
-
-$$(\star_1)_{ee} = \frac{\ell_e^{*}}{\ell_e} = \frac{\cot\alpha_e + \cot\beta_e}{2}$$
-
-**Helmholtz–Hodge decomposition** — enabled by $\star$:
-
-$$\mathbf{X} = \underbrace{\nabla_\Gamma f}_{\text{gradient}} + \underbrace{\nabla_\Gamma\!\times\! g}_{\text{curl}} + \underbrace{\mathbf{H}}_{\text{harmonic}}$$
+![](figures/schem_hodge.svg){fig-align="center" width=92%}
 
 :::
 ::: {.column width="50%"}
 
-![Hodge decomposition of a tangent vector field on a surface into gradient + curl + harmonic parts](figures/crane_ddg_fig8.svg){width=100%}
+The Hodge star $\star$ pairs each primal cell with its dual cell through a **local metric ratio**:
 
-*Figure: Crane — DDG (CMU)*
+$$\star_0 = \mathrm{diag}(A_i^{\mathrm{dual}}), \qquad \star_2 = \mathrm{diag}(1/A_f),$$
+
+$$(\star_1)_{ee} = \frac{\ell_e^{*}}{\ell_e} = \frac{\cot\alpha_e + \cot\beta_e}{2}.$$
+
+This is the **only** place lengths and areas enter. Topology ($d_0,d_1$) stays metric-free; $\star$ carries every geometric quantity.
 
 :::
 :::
 
-## The Laplace–Beltrami operator in DEC
+## The surface Laplacian
 
-Assemble topology + metric:
+Assembled by composing the discrete gradient, metric, and divergence:
 
 $$\boxed{L = \star_0^{-1}\,d_0^\top\,\star_1\,d_0}$$
 
-Read right to left: **gradient** ($d_0$) → **metric** ($\star_1$) → **divergence** ($d_0^\top$) → **normalize** ($\star_0^{-1}$).
-
-Expanding, this recovers the **cotangent formula**:
-
-$$
-(L\,u)_i = \frac{1}{A_i}\sum_{j \sim i} \frac{\cot\alpha_{ij} + \cot\beta_{ij}}{2}\,(u_j - u_i)
-$$
+Read right to left: **gradient** ($d_0$) → **metric** ($\star_1$) → **divergence** ($d_0^\top$) → **normalize** by dual area ($\star_0^{-1}$).
 
 :::{.columns}
-::: {.column width="55%"}
+::: {.column width="48%"}
 
-Properties: intrinsic · symmetric positive semi-definite · second-order convergent
-
-Same formula from DEC and cotangent FEM derivations.
+![](figures/schem_laplacian.svg){fig-align="center" width=100%}
 
 :::
-::: {.column width="45%"}
+::: {.column width="52%"}
 
-![The 3-step process: diffuse → normalize gradient → recover distance. Same DEC pipeline.](figures/crane_heat_fig1.png){width=100%}
+Expanded at vertex $i$, this is the familiar **cotangent stencil**:
 
-*Figure: Crane — The Heat Method (CMU)*
+$$
+(L\,u)_i = \frac{1}{A_i^{\mathrm{dual}}}\sum_{j \sim i} \frac{\cot\alpha_{ij} + \cot\beta_{ij}}{2}\,(u_j - u_i),
+$$
+
+intrinsic to the mesh, symmetric positive semi-definite, second-order convergent - the standard surface Laplacian, derived two ways (DEC and cotangent FEM) giving the same matrix.
 
 :::
 :::
 
 # Our implementation {background-color="#1a1a2e"}
 
-## FrontIntrinsicOps.jl — static DEC on front meshes
+
+## Static results - diffusion & convergence {.center}
 
 :::{.columns}
-::: {.column width="52%"}
+::: {.column width="50%"}
 
-**Static interface DDG/DEC library in Julia:**
+<video src="figures/18_bunny_diffusion.mp4" width="100%" autoplay loop muted playsinline></video>
 
-```
-mesh / STL / CSV
-    │
-    ▼  incidence matrices   d₀, d₁
-    ▼  Hodge stars          ★₀, ★₁, ★₂
-    ▼  Laplace–Beltrami     L = d₀ᵀ ★₁ d₀
-    ▼  transport operators
-    │
-    ▼  sparse assembly → solve
-```
-
-Built-in meshes: icosphere · UV sphere · torus · circle
-
-[github.com/PenguinxCutCell/FrontIntrinsicOps.jl](https://github.com/PenguinxCutCell/FrontIntrinsicOps.jl)
+Heat equation on the Stanford bunny (2562 v / 4968 f): $\partial_t u = D\Delta_\Gamma u$, Crank–Nicolson. $L$ assembled directly from incidence + Hodge stars - no analytic surface.
 
 :::
-::: {.column width="48%"}
+::: {.column width="50%"}
 
-**Key capabilities:**
+**Spatial convergence - heat on $S^2$**, manufactured solution $u = e^{-2 D t}\, z$:
 
-* DEC + cotangent Laplace–Beltrami
-* Barycentric **and** Voronoi dual areas
-* Heat-method geodesics
-* Harmonic basis (topology-aware)
-* Whitney FEEC layer
-* Surface diffusion: BE / Crank–Nicolson
-* Advection–diffusion: IMEX
-* Makie visualization extension
+| Level | $n_v$ | $L^2$ error | Order |
+|:--:|:--:|:--:|:--:|
+| 1 | 42   | $1.06\times10^{-3}$ | - |
+| 2 | 162  | $5.33\times10^{-4}$ | 1.03 |
+| 3 | 642  | $1.63\times10^{-4}$ | 1.73 |
+| 4 | 2562 | $3.88\times10^{-5}$ | **2.07** |
+
+::: {.callout-tip title="Algebraic invariants (Tier 0)"}
+$\|d_1\,d_0\|_\infty = 0$ · $\|L_{\rm DEC}-L_{\rm cot}\|_\infty<10^{-12}$ · constants preserved to $10^{-16}$.
+:::
 
 :::
 :::
 
-## Semi-discrete form and results — static PDEs
-
-**Discrete diffusion** $\partial_t u - D\,\Delta_\Gamma u = f$:
-
-$$M\frac{u^{n+1}-u^n}{\Delta t} + D\,K\,u^{n+1} = b^{n+1},\qquad M = \star_0,\quad K = d_0^\top\star_1 d_0$$
-
-**Benchmark: heat equation on $S^2$** — exact solution $u = e^{-\ell(\ell+1)t}\,Y_\ell^m$
+## Reaction–diffusion & conservation {.center}
 
 :::{.columns}
-::: {.column width="55%"}
+::: {.column width="50%"}
 
-**Spatial convergence (sphere harmonic):**
+**Conservation under tangential advection**
 
-| Level | $L^2$ error | Order |
-|---|---|---|
-| 1 | $2.14\times10^{-4}$ | — |
-| 2 | $8.89\times10^{-5}$ | 1.28 |
-| 3 | $2.49\times10^{-5}$ | 1.84 |
+![](figures/01_mass_conservation.png){width=100%}
 
-**Static circle, CN scheme:**
-
-| Refinement | $L^2$ error | Order |
-|---|---|---|
-| $h_1$ | $1.71\times10^{-4}$ | — |
-| $h_2$ | $4.28\times10^{-5}$ | 2.00 |
-| $h_3$ | $1.07\times10^{-5}$ | 2.00 |
-| $h_4$ | $2.66\times10^{-6}$ | 2.01 |
+Solid-body rotation on $S^2$, SSP-RK3: mass drift $\sim 10^{-14}$.
 
 :::
-::: {.column width="45%"}
+::: {.column width="50%"}
 
-::: {.callout-tip title="Tier 0 invariants"}
-$\|d_1 d_0\|_\infty = 0.0$ — exact
+**Brusselator Turing patterns on $S^2$**
 
-$\|L_{\rm DEC} - L_{\rm cotan}\|_\infty < 10^{-12}$
+<video src="figures/13_turing_sphere.mp4" width="100%" autoplay loop muted playsinline></video>
 
-Gauss–Bonnet residual: machine precision
-
-Constant preservation: $1.78\times10^{-16}$
-:::
+Two-species IMEX: diffusion implicit, reaction explicit.
 
 :::
 :::
@@ -443,45 +357,45 @@ Constant preservation: $1.78\times10^{-16}$
 
 For a **moving** surface $\Gamma(t)$, the governing equation becomes:
 
-$$\partial_t^\bullet u + u\,\nabla_\Gamma\!\cdot\mathbf{u}_\Gamma - D\,\Delta_\Gamma u = f$$
+$$\partial_t^\bullet u + u\,\nabla_\Gamma\!\cdot\mathbf{u}_\Gamma - D\,\Delta_\Gamma u = f.$$
 
-Even with no tangential advection, normal surface motion enters through the **area-change term** $u\,\nabla_\Gamma\cdot\mathbf{u}_\Gamma$.
+Even with no tangential advection, normal motion enters through the **area-change term** $u\,\nabla_\Gamma\!\cdot\!\mathbf{u}_\Gamma$.
 
 :::{.columns}
 ::: {.column width="55%"}
 
-**Space-time worldsheet:**
+**The 4D space-time manifold over one slab:**
 
-$$\mathcal{G} = \bigcup_{t \in [t^n,\, t^{n+1}]} \Gamma(t) \subset \mathbb{R}^3\times\mathbb{R}$$
+$$\mathcal{G} = \bigcup_{t \in [t^n,\, t^{n+1}]} \Gamma(t) \subset \mathbb{R}^3\times\mathbb{R}.$$
 
-Apply DEC to this 3D space-time manifold:
+Apply DEC to this 4D manifold:
 
-* Prisms $\Gamma^n \to \Gamma^{n+1}$ decomposed into tetrahedra
-* DEC operators assembled on the 4D complex
-* Geometry and transport handled **together**
+* Prisms $\Gamma^n \to \Gamma^{n+1}$ decomposed into tetrahedra.
+* DEC operators assembled on the 4D space-time complex.
+* Geometry and transport handled **together**.
 
 :::
 ::: {.column width="45%"}
 
 ::: {.callout-important title="Why space-time?"}
-"Update geometry, then solve" strategies break conservation on moving surfaces. The worldsheet formulation restores it by treating geometry and transport as one coupled problem.
+"Update geometry, then solve" strategies break conservation on moving surfaces. Assembling DEC on the 4D space-time manifold restores it by treating geometry and transport as one coupled problem.
 :::
 
 :::
 :::
 
-## FrontSpaceTimeDEC.jl — moving-surface DEC
+## FrontSpaceTimeDEC.jl - moving-surface DEC
 
 :::{.columns}
 ::: {.column width="55%"}
 
 **Space-time DEC library in Julia:**
 
-* Builds one-slab worldsheets $\Gamma^n \to \Gamma^{n+1}$
-* Prism decomposition: edge-sweeps → triangles, triangle-prisms → tetrahedra
-* DEC operators on the space-time complex
-* Diffusion · transport · advection-diffusion (BE + CN)
-* **Coupled solver**: $V_n = \mathcal{F}(u,\,\nabla_\Gamma u,\,\kappa,\,\ldots)$
+* Builds the 4D space-time manifold $\Gamma^n \to \Gamma^{n+1}$ as a single slab.
+* Prism decomposition: edge-sweeps → triangles, triangle-prisms → tetrahedra.
+* DEC operators on the 4D space-time complex.
+* Diffusion · transport · advection–diffusion (BE + CN).
+* **Coupled solver**: $V_n = \mathcal{F}(u,\,\nabla_\Gamma u,\,\kappa,\,\ldots)$.
 
 Handles curve slabs $(x,y,t)$ and surface slabs $(x,y,z,t)$.
 
@@ -490,7 +404,7 @@ Handles curve slabs $(x,y,t)$ and surface slabs $(x,y,z,t)$.
 :::
 ::: {.column width="45%"}
 
-**Tiered validation (snapshot 2026-04-03):**
+**Tiered validation:**
 
 | Tier | Coverage |
 |------|----------|
@@ -502,44 +416,46 @@ Handles curve slabs $(x,y,t)$ and surface slabs $(x,y,z,t)$.
 :::
 :::
 
-## Results — moving surfaces
+## Moving results - prescribed, coupled, surfactant {.center}
 
 :::{.columns}
-::: {.column width="55%"}
+::: {.column width="33%"}
 
-**Expanding sphere (prescribed motion):**
+**Expanding sphere** - prescribed $V_n$
 
-| Level | $L^2$ error | Spatial order |
-|---|---|---|
-| 2 | $2.10\times10^{-4}$ | — |
-| 3 | $8.76\times10^{-5}$ | 1.27 |
-| 4 | $2.47\times10^{-5}$ | 1.83 |
+<video src="figures/21_expanding_sphere.mp4" width="100%" autoplay loop muted playsinline></video>
 
-**Temporal convergence (expanding circle, BE):**
+Exact ODE for $u(t) = u_0 e^{-2 D t/R(t)^2}$ on a growing sphere.
 
-| $\Delta t$ | Order |
-|---|---|
-| $0.04\to0.02$ | 0.97 |
-| $0.02\to0.01$ | 0.95 |
-| $0.01\to0.005$ | 0.91 |
+*4-level convergence: $L^2 = 2.10\!\times\!10^{-4} \to 2.47\!\times\!10^{-5}$, order $\to 1.83$.*
 
 :::
-::: {.column width="45%"}
+::: {.column width="33%"}
 
-**Coupled benchmarks:**
+**Crystal growth** - coupled $V_n = M(u-u_{\rm eq})$
 
-| Test | Error | Mass error |
-|---|---|---|
-| MCF sphere — radius | $4.18\times10^{-4}$ | — |
-| Coupled radial circle | $8.33\times10^{-5}$ | $2.54\times10^{-7}$ |
-| Coupled radial sphere | $1.01\times10^{-4}$ | $\mathbf{1.44\times10^{-16}}$ |
-| Perturbed sphere drift | — | $9.81\times10^{-9}$ |
+<video src="figures/20_crystal_growth.mp4" width="100%" autoplay loop muted playsinline></video>
+
+Interface advances faster where supersaturation is high; surface diffusion smooths morphology.
+
+*Picard-coupled Stefan-type, fully on the 4D space-time slab.*
+
+:::
+::: {.column width="34%"}
+
+**Surfactant on a rising bubble** - Hadamard
+
+<video src="figures/19_rising_bubble.mp4" width="100%" autoplay loop muted playsinline></video>
+
+Bubble translates upward; surfactant accumulates in a rear stagnant cap.
+
+*DEC matches $\Gamma\propto e^{-\mathrm{Pe}\cos\theta}$ to **<3.5%** (log-$L^2$, $\mathrm{Pe}\le 10$).*
+
+:::
+:::
 
 ::: {.callout-tip}
-Mass conservation at **machine precision** in the coupled sphere benchmark — a direct consequence of the conservative space-time formulation.
-:::
-
-:::
+Three regimes, **one solver**: prescribed motion · coupled motion · advection–diffusion on a moving $\Gamma(t)$. Mass conservation at machine precision in the coupled sphere benchmark ($3.05\!\times\!10^{-16}$).
 :::
 
 # Summary {background-color="#1a1a2e"}
@@ -553,7 +469,7 @@ The Bothe model demands a surface PDE solver as a first-class component:
 
 * Surfactant transport on droplets and bubbles
 * Interfacial adsorption/desorption kinetics
-* Marangoni-driven flows — $\nabla_\Gamma\sigma(\Gamma_s)$
+* Marangoni-driven flows - $\nabla_\Gamma\sigma(\Gamma_s)$
 * Membrane mechanics and biological interfaces
 * Phase-change chemistry at the interface
 
@@ -563,14 +479,54 @@ The Bothe model demands a surface PDE solver as a first-class component:
 ::: {.callout-note title="The DEC payoff"}
 $$\underbrace{d_0,\, d_1}_{\text{topology: exact}} \;+\; \underbrace{\star_0,\, \star_1,\, \star_2}_{\text{geometry: local metric}}$$
 
-Conservation, compatibility, geometry-awareness — **built in**, not bolted on.
+Conservation, compatibility, geometry-awareness - **built in**, not bolted on.
 :::
 
 :::
 :::
 
 ::: center
-Many multiphase models are incomplete if the interface carries no physics of its own.
+When the interface carries its own physics, multiphase models need a surface PDE solver as a first-class component.
+:::
+
+## What the packages do {.center}
+
+:::{.columns}
+::: {.column width="50%"}
+
+**FrontIntrinsicOps.jl** - static DEC
+\
+\
+
+* DEC + cotangent Laplace–Beltrami
+* Barycentric **and** Voronoi dual areas
+* Heat-method geodesics
+* Whitney FEEC layer
+* Surface diffusion: BE / Crank–Nicolson
+* Advection–diffusion: IMEX
+* Reaction–diffusion (Turing/Brusselator)
+* Mesh / STL / OBJ I/O · Makie extension
+
+:::
+::: {.column width="50%"}
+
+**FrontSpaceTimeDEC.jl** - moving DEC
+\
+\
+
+* One-slab 4D space-time manifold $\Gamma^n\to\Gamma^{n+1}$
+* Prism → tetrahedron space-time complex
+* DEC operators on the 4D complex
+* Diffusion · transport · advection-diffusion
+* Coupled solver $V_n=\mathcal F(u,\nabla_\Gamma u,\kappa)$
+* Curve $(x,y,t)$ and surface $(x,y,z,t)$ slabs
+* Tiered validation (Tier 0–4, all green)
+
+:::
+:::
+
+::: {.callout-tip}
+Both are open-source Julia packages with the same DEC core: topology ($d$) assembled apart from geometry ($\star$), combined into structure-preserving operators.
 :::
 
 ## Take-home {.center}
@@ -580,10 +536,10 @@ Many multiphase models are incomplete if the interface carries no physics of its
 
 **What we built:**
 
-1. The Bothe model demands solving a surface PDE — $\Gamma_s$ on $\Gamma(t)$
+1. The Bothe model demands solving a surface PDE - $\Gamma_s$ on $\Gamma(t)$
 2. DDG/DEC gives structured discrete operators: topology $\perp$ geometry
-3. **FrontIntrinsicOps.jl** — static DEC: $d$, $\star$, $L$, geodesics, IMEX transport
-4. **FrontSpaceTimeDEC.jl** — moving DEC: worldsheets, coupled dynamics, mass-conservative
+3. **FrontIntrinsicOps.jl** - static DEC: $d$, $\star$, $L$, geodesics, IMEX transport
+4. **FrontSpaceTimeDEC.jl** - moving DEC: 4D space-time slabs, coupled dynamics, mass-conservative
 
 **Perspectives:**
 
@@ -608,7 +564,7 @@ DEC gives a clean, structured way to do exactly that.
 
 ---
 
-*DDG figures: Keenan Crane (CMU) — [cs.cmu.edu/~kmcrane](https://www.cs.cmu.edu/~kmcrane/)*
+*DDG figures: Keenan Crane (CMU) - [cs.cmu.edu/~kmcrane](https://www.cs.cmu.edu/~kmcrane/)*
 
 :::
 :::
@@ -620,11 +576,11 @@ DEC gives a clean, structured way to do exactly that.
 
 # Appendix {.appendix visibility="uncounted"}
 
-## Appendix — Continuous identities
+## Appendix - Continuous identities
 
 $$\nabla_\Gamma u = (\mathbf{I} - \mathbf{n}\otimes\mathbf{n})\nabla u, \qquad \Delta_\Gamma u = \nabla_\Gamma\cdot\nabla_\Gamma u, \qquad \partial_t^\bullet u = \partial_t u + \mathbf{u}_\Gamma\cdot\nabla u$$
 
-## Appendix — DEC dictionary
+## Appendix - DEC dictionary
 
 | Continuous | Discrete |
 |---|---|
@@ -633,9 +589,9 @@ $$\nabla_\Gamma u = (\mathbf{I} - \mathbf{n}\otimes\mathbf{n})\nabla u, \qquad \
 | 2-form | densities on faces |
 | exterior derivative $d$ | incidence matrix |
 | Hodge star $\star$ | primal/dual metric ratio |
-| $d^2 = 0$ | $d_1 d_0 = 0$ — exact by topology |
+| $d^2 = 0$ | $d_1 d_0 = 0$ - exact by topology |
 
-## Appendix — Full Bothe system
+## Appendix - Full Bothe system
 
 **Bulk adsorption coupling** at $\Gamma(t)$:
 
@@ -645,7 +601,7 @@ $$D^\pm\nabla c^\pm\cdot\mathbf{n}^\pm = \mp j^\pm_\Gamma, \qquad j^\pm_\Gamma =
 
 $$\bigl[\!\bigl[D\nabla c\cdot\mathbf{n}\bigr]\!\bigr] = j^+_\Gamma - j^-_\Gamma$$
 
-## Appendix — Cotangent formula
+## Appendix - Cotangent formula
 
 $$
 (L\,u)_i = \frac{1}{A_i}\sum_{j \sim i} \frac{\cot\alpha_{ij} + \cot\beta_{ij}}{2}(u_j - u_i)
